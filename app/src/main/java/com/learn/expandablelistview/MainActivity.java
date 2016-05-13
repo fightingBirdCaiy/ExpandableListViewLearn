@@ -36,6 +36,12 @@ public class MainActivity extends Activity
 
     private MyExpandableListViewAdapter adapter;
 
+    /**
+     * inflate的view
+     * 每次inflate的时候加1
+     */
+    private int newInflateViewCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -134,6 +140,11 @@ public class MainActivity extends Activity
         for(int i=0; i<groupCount; i++){
             expandableListView.expandGroup(i);
         }
+    }
+
+    private void increaAndToast(){
+        newInflateViewCount ++;
+        Toast.makeText(this,"inflate新的view,总个数:" + newInflateViewCount,Toast.LENGTH_SHORT).show();
     }
 
     // 用过ListView的人一定很熟悉，只不过这里是BaseExpandableListAdapter
@@ -264,6 +275,7 @@ public class MainActivity extends Activity
             GroupHolder groupHolder = null;
             if (convertView == null)
             {
+                increaAndToast();
                 convertView = LayoutInflater.from(context).inflate(R.layout.expendlist_group, null);
                 groupHolder = new GroupHolder();
                 groupHolder.txt = (TextView)convertView.findViewById(R.id.txt);
@@ -314,6 +326,7 @@ public class MainActivity extends Activity
             ItemHolder itemHolder = null;
             if (convertView == null)
             {
+                increaAndToast();
                 convertView = LayoutInflater.from(context).inflate(R.layout.expendlist_item, null);
                 itemHolder = new ItemHolder();
                 itemHolder.txt = (TextView)convertView.findViewById(R.id.txt);
