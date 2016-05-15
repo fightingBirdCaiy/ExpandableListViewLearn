@@ -15,7 +15,6 @@
         {
             itemHolder = (ItemHolder)convertView.getTag();
             type = (Integer)convertView.getTag(R.id.key_expandable_type);
-//            Log.e(TAG,"type=" + type + ",groupPosition=" + groupPosition);
             if(type != groupPosition){//不复用的情况2
                 return inflateNewView(groupPosition, childPosition);
             }else{//复用的情况
@@ -31,18 +30,14 @@
                 return convertView;
             }
         }
-
-
     }
-    
-    <br/>
  日志：<br/>
- 05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:1097 <br/>
- 05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:1098 <br/>
- 05-15 15:54:01.715 31305-31305/? E/MyExpandableListViewAdapter: inflate新的view,type=0,总个数:540 <br/>
- 05-15 15:54:01.785 31305-31305/? E/MyExpandableListViewAdapter: inflate新的view,type=0,总个数:541 <br/>
+ 05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:930 <br/>
+ 05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:931 <br/>
+ 05-15 15:54:01.715 31305-31305/? E/MyExpandableListViewAdapter: inflate新的view,type=0,总个数:465 <br/>
+ 05-15 15:54:01.785 31305-31305/? E/MyExpandableListViewAdapter: inflate新的view,type=0,总个数:466 <br/>
  结果：<br/>
  复用view的情况大概是inflate的view的两倍，但是inflate的view的情况始终在增长<br/>
  内存占用：<br/>
- 
+ ![image](https://github.com/fightingBirdCaiy/ExpandableListViewLearn/blob/master/image/memory.jpg)
  
