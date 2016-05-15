@@ -32,7 +32,7 @@
             }
         }
     }
- ``` <br/>
+ ```
  日志：<br/>
  05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:930 <br/>
  05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:931 <br/>
