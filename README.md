@@ -1,4 +1,4 @@
-# ExpandableListViewLearn
+# ExpandableListViewLearn </br>
 1.学习ExpandableListView
 2.测试ExapndableListView对多type的支持情况
 (1)原生对ListView的多type的方式不支持。
