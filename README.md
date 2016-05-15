@@ -5,6 +5,7 @@
   因为BaseExpandableListAdapter未继承BaseAdapter,所有没有getItemViewType()方法。<br/>
 (2)自定义对ListView的多type的方式不支持<br/>
  关键代码如下：<br/>
+ ```java
  private View getChildViewByType(int groupPosition, int childPosition, View convertView) {
         ItemHolder itemHolder = null;
         Integer type = null;
@@ -31,6 +32,7 @@
             }
         }
     }
+ ```java <br/>
  日志：<br/>
  05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:930 <br/>
  05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:931 <br/>
