@@ -1,10 +1,10 @@
 # ExpandableListViewLearn 
 1.学习ExpandableListView <br/>
-2.测试ExapndableListView对多type的支持情况
-(1)原生对ListView的多type的方式不支持。
-  因为BaseExpandableListAdapter未继承BaseAdapter,所有没有getItemViewType()方法。
-(2)自定义对ListView的多type的方式不支持
- 关键代码如下：
+2.测试ExapndableListView对多type的支持情况<br/>
+(1)原生对ListView的多type的方式不支持。<br/>
+  因为BaseExpandableListAdapter未继承BaseAdapter,所有没有getItemViewType()方法。<br/>
+(2)自定义对ListView的多type的方式不支持<br/>
+ 关键代码如下：<br/>
  private View getChildViewByType(int groupPosition, int childPosition, View convertView) {
         ItemHolder itemHolder = null;
         Integer type = null;
@@ -35,13 +35,14 @@
 
     }
     
- 日志：
- 05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:1097
- 05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:1098 
- 05-15 15:54:01.715 31305-31305/? E/MyExpandableListViewAdapter: inflate新的view,type=0,总个数:540
- 05-15 15:54:01.785 31305-31305/? E/MyExpandableListViewAdapter: inflate新的view,type=0,总个数:541
- 结果：
- 复用view的情况大概是inflate的view的两倍，但是inflate的view的情况始终在增长
- 内存占用：
+    <br/>
+ 日志：<br/>
+ 05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:1097 <br/>
+ 05-15 15:54:01.380 31305-31305/? I/MyExpandableListViewAdapter: 复用了view,总个数:1098 <br/>
+ 05-15 15:54:01.715 31305-31305/? E/MyExpandableListViewAdapter: inflate新的view,type=0,总个数:540 <br/>
+ 05-15 15:54:01.785 31305-31305/? E/MyExpandableListViewAdapter: inflate新的view,type=0,总个数:541 <br/>
+ 结果：<br/>
+ 复用view的情况大概是inflate的view的两倍，但是inflate的view的情况始终在增长<br/>
+ 内存占用：<br/>
  
  
