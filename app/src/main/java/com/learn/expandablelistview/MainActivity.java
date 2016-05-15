@@ -15,6 +15,8 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,25 +24,20 @@ public class MainActivity extends Activity
 {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private ExpandableListView expandableListView;
+    private ExpandableListView mExpandableListView;
 
-    private List<String> group_list;
+    private List<String> mGroupList;
 
-    private List<String> item_lt;
+    private List<String> mEachItemList;
 
-    private List<List<String>> item_list;
+    private List<List<String>> mChildList;
 
-    private List<List<Integer>> item_list2;
+    private List<List<Integer>> mChildImgList;
+    
+    private List<Integer> mImgList;
+    
+    private MyExpandableListViewAdapter mAdapter;
 
-    private List<List<Integer>> gr_list2;
-
-    private MyExpandableListViewAdapter adapter;
-
-    /**
-     * inflate的view
-     * 每次inflate的时候加1
-     */
-    private int newInflateViewCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -48,63 +45,51 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 随便一堆测试数据
-        group_list = new ArrayList<String>();
-        group_list.add("姓氏1");
-        group_list.add("姓氏2");
-        group_list.add("姓氏3");
-        group_list.add("姓氏4");
-        group_list.add("姓氏5");
-        group_list.add("姓氏6");
-        group_list.add("姓氏7");
-        group_list.add("姓氏8");
-        group_list.add("姓氏9");
-        group_list.add("姓氏10");
+        // 随便一堆测试数据 10个分组
+        mGroupList = new ArrayList<String>();
+        mGroupList.add("姓氏1");
+        mGroupList.add("姓氏2");
+        mGroupList.add("姓氏3");
+        mGroupList.add("姓氏4");
+        mGroupList.add("姓氏5");
+        mGroupList.add("姓氏6");
+        mGroupList.add("姓氏7");
+        mGroupList.add("姓氏8");
+        mGroupList.add("姓氏9");
+        mGroupList.add("姓氏10");
 
+        mEachItemList = new ArrayList<String>();
+        mEachItemList.add("刘一");
+        mEachItemList.add("陈二");
+        mEachItemList.add("张三");
+        mEachItemList.add("李四");
+        mEachItemList.add("王五");
+        mEachItemList.add("赵六");
+        mEachItemList.add("孙七");
+        mEachItemList.add("周八");
+        mEachItemList.add("吴九");
+        mEachItemList.add("郑十");
 
-        item_lt = new ArrayList<String>();
-        item_lt.add("刘一");
-        item_lt.add("陈二");
-        item_lt.add("张三");
-        item_lt.add("李四");
-        item_lt.add("王五");
-        item_lt.add("赵六");
-        item_lt.add("孙七");
-        item_lt.add("周八");
-        item_lt.add("吴九");
-        item_lt.add("郑十");
-
-        item_list = new ArrayList<List<String>>();
+        mChildList = new ArrayList<List<String>>();
         for(int i=0; i<10; i++){
-            item_list.add(item_lt);
+            mChildList.add(mEachItemList);
         }
 
-        List<Integer> tmp_list = new ArrayList<Integer>();
-        tmp_list.add(R.mipmap.ic_launcher);
+        mImgList = new ArrayList<Integer>();
         for(int i=0; i<10; i++){
-            tmp_list.add(R.mipmap.ic_launcher);
+            mImgList.add(R.mipmap.ic_launcher);
         }
 
-        item_list2 = new ArrayList<List<Integer>>();
+        mChildImgList = new ArrayList<List<Integer>>();
         for(int i=0; i<10; i++){
-            item_list2.add(tmp_list);
+            mChildImgList.add(mImgList);
         }
 
-        List<Integer> gr_list = new ArrayList<Integer>();
-        for(int i=0; i<10; i++){
-            gr_list.add(R.mipmap.ic_launcher);
-        }
-
-        gr_list2 = new ArrayList<List<Integer>>();
-        for(int i=0; i<10; i++){
-            gr_list2.add(gr_list);
-        }
-
-        expandableListView = (ExpandableListView)findViewById(R.id.expandable_list_view);
-        expandableListView.setGroupIndicator(null);
+        mExpandableListView = (ExpandableListView)findViewById(R.id.expandable_list_view);
+        mExpandableListView.setGroupIndicator(null);
 
         // 监听组点击
-        expandableListView.setOnGroupClickListener(new OnGroupClickListener() {
+        mExpandableListView.setOnGroupClickListener(new OnGroupClickListener() {
             @SuppressLint("NewApi")
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -118,266 +103,34 @@ public class MainActivity extends Activity
         });
 
         // 监听每个分组里子控件的点击事件
-        expandableListView.setOnChildClickListener(new OnChildClickListener()
-        {
+        mExpandableListView.setOnChildClickListener(new OnChildClickListener() {
 
             @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id)
-            {
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 
-                Toast.makeText(MainActivity.this, "group=" + groupPosition + "---child=" + childPosition + "---" + item_list.get(groupPosition).get(childPosition), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "group=" + groupPosition + "---child=" + childPosition + "---" + mChildList.get(groupPosition).get(childPosition), Toast.LENGTH_SHORT).show();
 
                 return false;
             }
         });
 
-        adapter = new MyExpandableListViewAdapter(this);
+        mAdapter = new MyExpandableListViewAdapter(this, mGroupList, mChildList, mChildImgList);
 
-        expandableListView.setAdapter(adapter);
+        mExpandableListView.setAdapter(mAdapter);
 
         //展开所有group
-        int groupCount = adapter.getGroupCount();
+        int groupCount = mAdapter.getGroupCount();
         for(int i=0; i<groupCount; i++){
-            expandableListView.expandGroup(i);
-        }
-    }
-
-    private void increaAndToast(){
-        newInflateViewCount ++;
-        Toast.makeText(this,"inflate新的view,总个数:" + newInflateViewCount,Toast.LENGTH_SHORT).show();
-    }
-
-    // 用过ListView的人一定很熟悉，只不过这里是BaseExpandableListAdapter
-    class MyExpandableListViewAdapter extends BaseExpandableListAdapter
-    {
-
-        private Context context;
-
-        public MyExpandableListViewAdapter(Context context)
-        {
-            this.context = context;
+            mExpandableListView.expandGroup(i);
         }
 
-        /**
-         *
-         * 获取组的个数
-         *
-         * @return
-         * @see android.widget.ExpandableListAdapter#getGroupCount()
-         */
-        @Override
-        public int getGroupCount()
-        {
-            return group_list.size();
-        }
-
-        /**
-         *
-         * 获取指定组中的子元素个数
-         *
-         * @param groupPosition
-         * @return
-         * @see android.widget.ExpandableListAdapter#getChildrenCount(int)
-         */
-        @Override
-        public int getChildrenCount(int groupPosition)
-        {
-            return item_list.get(groupPosition).size();
-        }
-
-        /**
-         *
-         * 获取指定组中的数据
-         *
-         * @param groupPosition
-         * @return
-         * @see android.widget.ExpandableListAdapter#getGroup(int)
-         */
-        @Override
-        public Object getGroup(int groupPosition)
-        {
-            return group_list.get(groupPosition);
-        }
-
-        /**
-         *
-         * 获取指定组中的指定子元素数据。
-         *
-         * @param groupPosition
-         * @param childPosition
-         * @return
-         * @see android.widget.ExpandableListAdapter#getChild(int, int)
-         */
-        @Override
-        public Object getChild(int groupPosition, int childPosition)
-        {
-            return item_list.get(groupPosition).get(childPosition);
-        }
-
-        /**
-         *
-         * 获取指定组的ID，这个组ID必须是唯一的
-         *
-         * @param groupPosition
-         * @return
-         * @see android.widget.ExpandableListAdapter#getGroupId(int)
-         */
-        @Override
-        public long getGroupId(int groupPosition)
-        {
-            return groupPosition;
-        }
-
-        /**
-         *
-         * 获取指定组中的指定子元素ID
-         *
-         * @param groupPosition
-         * @param childPosition
-         * @return
-         * @see android.widget.ExpandableListAdapter#getChildId(int, int)
-         */
-        @Override
-        public long getChildId(int groupPosition, int childPosition)
-        {
-            return childPosition;
-        }
-
-        /**
-         *
-         * 组和子元素是否持有稳定的ID,也就是底层数据的改变不会影响到它们。
-         *
-         * @return
-         * @see android.widget.ExpandableListAdapter#hasStableIds()
-         */
-        @Override
-        public boolean hasStableIds()
-        {
-            return true;
-        }
-
-        /**
-         *
-         * 获取显示指定组的视图对象
-         *
-         * @param groupPosition 组位置
-         * @param isExpanded 该组是展开状态还是伸缩状态
-         * @param convertView 重用已有的视图对象
-         * @param parent 返回的视图对象始终依附于的视图组
-         * @return
-         * @see android.widget.ExpandableListAdapter#getGroupView(int, boolean, android.view.View,
-         *      android.view.ViewGroup)
-         */
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent)
-        {
-            Log.e(TAG,"getGroupView方法调用了:groupPosition=" + groupPosition + ",isExpanded=" + isExpanded + ",convertView=" + convertView);
-            GroupHolder groupHolder = null;
-            if (convertView == null)
-            {
-                increaAndToast();
-                convertView = LayoutInflater.from(context).inflate(R.layout.expendlist_group, null);
-                groupHolder = new GroupHolder();
-                groupHolder.txt = (TextView)convertView.findViewById(R.id.txt);
-                groupHolder.img = (ImageView)convertView.findViewById(R.id.img);
-                convertView.setTag(groupHolder);
+        //测试动态插入一组数据时，是否所有view全部重新加载
+        mExpandableListView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.addGroup(2, "插入的groupName", mEachItemList, mImgList);
             }
-            else
-            {
-                groupHolder = (GroupHolder)convertView.getTag();
-            }
-
-            if (!isExpanded)
-            {
-                groupHolder.img.setBackgroundResource(R.mipmap.ic_launcher);
-            }
-            else
-            {
-                groupHolder.img.setBackgroundResource(R.mipmap.ic_launcher);
-            }
-
-            groupHolder.txt.setText(group_list.get(groupPosition));
-            groupHolder.txt.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context,"标题中的文字被点击了",Toast.LENGTH_SHORT).show();
-                }
-            });
-            return convertView;
-        }
-
-        /**
-         *
-         * 获取一个视图对象，显示指定组中的指定子元素数据。
-         *
-         * @param groupPosition 组位置
-         * @param childPosition 子元素位置
-         * @param isLastChild 子元素是否处于组中的最后一个
-         * @param convertView 重用已有的视图(View)对象
-         * @param parent 返回的视图(View)对象始终依附于的视图组
-         * @return
-         * @see android.widget.ExpandableListAdapter#getChildView(int, int, boolean, android.view.View,
-         *      android.view.ViewGroup)
-         */
-        @Override
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent)
-        {
-            Log.e(TAG,"getChildView方法调用了:groupPosition=" + groupPosition + ",childPosition=" + childPosition + ",isLastChild=" + isLastChild + ",convertView=" + convertView);
-            ItemHolder itemHolder = null;
-            if (convertView == null)
-            {
-                increaAndToast();
-                convertView = LayoutInflater.from(context).inflate(R.layout.expendlist_item, null);
-                itemHolder = new ItemHolder();
-                itemHolder.txt = (TextView)convertView.findViewById(R.id.txt);
-
-                itemHolder.img = (ImageView)convertView.findViewById(R.id.img);
-                convertView.setTag(itemHolder);
-            }
-            else
-            {
-                itemHolder = (ItemHolder)convertView.getTag();
-            }
-            itemHolder.txt.setText(item_list.get(groupPosition).get(childPosition));
-            itemHolder.txt.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "内容中的文字被点击了", Toast.LENGTH_SHORT).show();
-                }
-            });
-            itemHolder.img.setBackgroundResource(item_list2.get(groupPosition).get(childPosition));
-            return convertView;
-        }
-
-        /**
-         *
-         * 是否选中指定位置上的子元素。
-         *
-         * @param groupPosition
-         * @param childPosition
-         * @return
-         * @see android.widget.ExpandableListAdapter#isChildSelectable(int, int)
-         */
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition)
-        {
-            return true;
-        }
-
-    }
-
-    class GroupHolder
-    {
-        public TextView txt;
-
-        public ImageView img;
-    }
-
-    class ItemHolder
-    {
-        public ImageView img;
-
-        public TextView txt;
+        }, 3000);
     }
 
 }
