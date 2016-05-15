@@ -1,6 +1,7 @@
 package com.learn.expandablelistview;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,12 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter
      */
     private static int newInflateViewCount = 0;
 
+    /**
+     * 复用的view
+     * 每次复用的时候加1
+     */
+    private static int reuseedViewCount = 0;
+
     private Context mContext;
 
     private List<String> mGroupList;
@@ -43,7 +50,6 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter
         this.mChildImgList = childImgList;
     }
 
-
     /**
      * 在position位置插入一组数据
      * @param position
@@ -57,7 +63,6 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter
         mChildImgList.add(position,childImg);
         notifyDataSetChanged();
     }
-
 
     /**
      *
@@ -172,11 +177,11 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent)
     {
-        Log.e(TAG, "getGroupView方法调用了:groupPosition=" + groupPosition + ",isExpanded=" + isExpanded + ",convertView=" + convertView);
+        Log.d(TAG, "getGroupView方法调用了:groupPosition=" + groupPosition + ",isExpanded=" + isExpanded + ",convertView=" + convertView);
         GroupHolder groupHolder = null;
         if (convertView == null)
         {
-            increaAndToast();
+            increaseAndToast(-1);
             convertView = LayoutInflater.from(mContext).inflate(R.layout.expendlist_group, null);
             groupHolder = new GroupHolder();
             groupHolder.txt = (TextView)convertView.findViewById(R.id.txt);
@@ -187,6 +192,7 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter
         }
         else
         {
+            increaseUsedAndToast();
             groupHolder = (GroupHolder)convertView.getTag();
         }
 
@@ -245,22 +251,59 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent)
     {
-        Log.e(TAG,"getChildView方法调用了:groupPosition=" + groupPosition + ",childPosition=" + childPosition + ",isLastChild=" + isLastChild + ",convertView=" + convertView);
-        ItemHolder itemHolder = null;
-        if (convertView == null)
-        {
-            increaAndToast();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.expendlist_item, null);
-            itemHolder = new ItemHolder();
-            itemHolder.txt = (TextView)convertView.findViewById(R.id.txt);
+        Log.d(TAG,"getChildView方法调用了:groupPosition=" + groupPosition + ",childPosition=" + childPosition + ",isLastChild=" + isLastChild + ",convertView=" + convertView);
 
-            itemHolder.img = (ImageView)convertView.findViewById(R.id.img);
-            convertView.setTag(itemHolder);
+
+        convertView = getChildViewByType(groupPosition, childPosition, convertView);
+        return convertView;
+    }
+
+    @NonNull
+    private View getChildViewByType(int groupPosition, int childPosition, View convertView) {
+        ItemHolder itemHolder = null;
+        Integer type = null;
+        if (convertView == null){//不复用的情况1
+            return inflateNewView(groupPosition, childPosition);
         }
         else
         {
             itemHolder = (ItemHolder)convertView.getTag();
+            type = (Integer)convertView.getTag(R.id.key_expandable_type);
+//            Log.e(TAG,"type=" + type + ",groupPosition=" + groupPosition);
+            if(type != groupPosition){//不复用的情况2
+                return inflateNewView(groupPosition, childPosition);
+            }else{//复用的情况
+                increaseUsedAndToast();
+                itemHolder.txt.setText(mChildList.get(groupPosition).get(childPosition));
+                itemHolder.txt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(mContext, "内容中的文字被点击了", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                itemHolder.img.setBackgroundResource(mChildImgList.get(groupPosition).get(childPosition));
+                return convertView;
+            }
         }
+
+
+    }
+
+    @NonNull
+    private View inflateNewView(int groupPosition, int childPosition) {
+        View convertView;
+        ItemHolder itemHolder;
+        Integer type;
+        increaseAndToast(groupPosition);
+        convertView = LayoutInflater.from(mContext).inflate(R.layout.expendlist_item, null);
+        itemHolder = new ItemHolder();
+        itemHolder.txt = (TextView)convertView.findViewById(R.id.txt);
+
+        itemHolder.img = (ImageView)convertView.findViewById(R.id.img);
+        convertView.setTag(itemHolder);
+        convertView.setTag(R.id.key_expandable_type,groupPosition);
+        type = groupPosition;
+
         itemHolder.txt.setText(mChildList.get(groupPosition).get(childPosition));
         itemHolder.txt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -287,9 +330,15 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter
         return true;
     }
 
-    private void increaAndToast(){
+    private void increaseAndToast(int type){
         newInflateViewCount ++;
-        Toast.makeText(mContext,"inflate新的view,总个数:" + newInflateViewCount,Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mContext,"inflate新的view,总个数:" + newInflateViewCount,Toast.LENGTH_SHORT).show();
+        Log.e(TAG,"inflate新的view,type=" + type + ",总个数:" + newInflateViewCount);
+    }
+
+    private void increaseUsedAndToast(){
+        reuseedViewCount ++;
+        Log.i(TAG,"复用了view,总个数:" + reuseedViewCount);
     }
 }
 
