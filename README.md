@@ -1,5 +1,5 @@
-# ExpandableListViewLearn <br>
-1.学习ExpandableListView
+# ExpandableListViewLearn 
+1.学习ExpandableListView <br/>
 2.测试ExapndableListView对多type的支持情况
 (1)原生对ListView的多type的方式不支持。
   因为BaseExpandableListAdapter未继承BaseAdapter,所有没有getItemViewType()方法。
